@@ -12,13 +12,23 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) {
         router.replace('/auth')
-      } else {
-        setUser(data.user)
-        setLoading(false)
+        return
       }
+      // Redirect to onboarding if user has no pets yet
+      const { data: pets } = await supabase
+        .from('pets')
+        .select('id')
+        .eq('user_id', data.user.id)
+        .limit(1)
+      if (!pets || pets.length === 0) {
+        router.replace('/onboarding')
+        return
+      }
+      setUser(data.user)
+      setLoading(false)
     })
   }, [router])
 
