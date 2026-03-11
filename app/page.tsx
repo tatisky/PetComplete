@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '../src/lib/supabase'
 import type { User } from '@supabase/supabase-js'
@@ -83,8 +84,15 @@ export default function HomePage() {
         <div>
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/pets"
+              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left hover:shadow-md transition-all active:scale-95 border-t-4 border-t-brand-blue"
+            >
+              <span className="text-2xl block mb-2">🐶</span>
+              <p className="text-sm font-semibold text-gray-900">My Pets</p>
+              <p className="text-xs text-gray-400 mt-0.5">View &amp; manage pets</p>
+            </Link>
             {[
-              { icon: '🐶', label: 'My Pets', desc: 'View & manage pets', accent: 'border-t-4 border-t-brand-blue' },
               { icon: '📋', label: 'Health Records', desc: 'Vaccinations & visits', accent: 'border-t-4 border-t-olive' },
               { icon: '📅', label: 'Appointments', desc: 'Book a vet visit', accent: 'border-t-4 border-t-coral' },
               { icon: '💊', label: 'Medications', desc: 'Track prescriptions', accent: 'border-t-4 border-t-light-blue' },
