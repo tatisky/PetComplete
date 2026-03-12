@@ -778,10 +778,10 @@ export default function PetProfilePage() {
           </div>
         )}
         {activeTab === 'Medications' && (
-          <EmptyTabState icon="💊" message="No medications added yet" />
+          <EmptyTabState message="No medications added yet" />
         )}
         {activeTab === 'Reminders' && (
-          <EmptyTabState icon="🔔" message="No reminders set yet" />
+          <EmptyTabState message="No reminders set yet" />
         )}
       </div>
 
