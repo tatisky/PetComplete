@@ -2,10 +2,39 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '../../../src/lib/supabase'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+
+interface PetDocument {
+  id: string
+  category: string
+  document_type: string
+  file_name: string
+  file_url: string
+  notes: string | null
+  created_at: string
+}
+
+const CATEGORY_ICONS: Record<string, string> = {
+  'Medical Records': '🏥',
+  'Medications & Prescriptions': '💊',
+  'Insurance': '🛡️',
+  'Identification & Registration': '🪪',
+  'Preventive Care': '🌿',
+  'Specialized Health Programs': '🔬',
+  'External Care Providers': '🤝',
+  'Travel & Compliance': '✈️',
+  'End of Life': '🕊️',
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+  })
+}
 
 interface Pet {
   id: string
@@ -132,6 +161,15 @@ export default function PetProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<Tab>('Overview')
 
+  // Documents state
+  const [documents, setDocuments] = useState<PetDocument[]>([])
+  const [docsLoading, setDocsLoading] = useState(false)
+  const [docsFetched, setDocsFetched] = useState(false)
+  const [signingDocId, setSigningDocId] = useState<string | null>(null)
+  const [isManagingDocs, setIsManagingDocs] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<PetDocument | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
   // Edit state
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState<EditForm | null>(null)
@@ -162,6 +200,69 @@ export default function PetProfilePage() {
   }
 
   useEffect(() => { fetchPet() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleViewDocument = async (doc: PetDocument) => {
+    setSigningDocId(doc.id)
+
+    // Support both old format (full URL) and new format (bare storage path)
+    const storagePath = doc.file_url.startsWith('http')
+      ? doc.file_url.replace(/^.+\/pet-documents\//, '')
+      : doc.file_url
+
+    const { data, error } = await supabase.storage
+      .from('pet-documents')
+      .createSignedUrl(storagePath, 3600)
+
+    setSigningDocId(null)
+    if (error || !data) return
+
+    // Programmatic anchor click works cross-browser without triggering
+    // popup blockers (unlike window.open called after an await).
+    const a = document.createElement('a')
+    a.href = data.signedUrl
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  const fetchDocuments = async () => {
+    setDocsLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data } = await supabase
+      .from('documents')
+      .select('id, category, document_type, file_name, file_url, notes, created_at')
+      .eq('pet_id', id)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+    setDocuments(data ?? [])
+    setDocsLoading(false)
+    setDocsFetched(true)
+  }
+
+  useEffect(() => {
+    if (activeTab === 'Documents' && !docsFetched) {
+      fetchDocuments()
+    }
+  }, [activeTab, docsFetched]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleDeleteDocument = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+
+    const storagePath = deleteTarget.file_url.startsWith('http')
+      ? deleteTarget.file_url.replace(/^.+\/pet-documents\//, '')
+      : deleteTarget.file_url
+
+    await supabase.storage.from('pet-documents').remove([storagePath])
+    await supabase.from('documents').delete().eq('id', deleteTarget.id)
+
+    setDocuments((prev) => prev.filter((d) => d.id !== deleteTarget.id))
+    setDeleteTarget(null)
+    setDeleting(false)
+  }
 
   const startEditing = () => {
     if (!pet) return
@@ -480,12 +581,25 @@ export default function PetProfilePage() {
             ←
           </button>
           <span className="text-sm font-bold text-gray-900 truncate mx-3">{pet.name}</span>
-          <button
-            onClick={startEditing}
-            className="text-sm font-semibold text-brand-blue hover:text-brand-blue/70 transition-colors"
-          >
-            Edit
-          </button>
+          {activeTab === 'Overview' && (
+            <button
+              onClick={startEditing}
+              className="text-sm font-semibold text-brand-blue hover:text-brand-blue/70 transition-colors"
+            >
+              Edit
+            </button>
+          )}
+          {activeTab === 'Documents' && (
+            <button
+              onClick={() => setIsManagingDocs((m) => !m)}
+              className={`text-sm font-semibold transition-colors ${isManagingDocs ? 'text-gray-900' : 'text-brand-blue hover:text-brand-blue/70'}`}
+            >
+              {isManagingDocs ? 'Done' : 'Manage'}
+            </button>
+          )}
+          {(activeTab === 'Medications' || activeTab === 'Reminders') && (
+            <div className="w-14" />
+          )}
         </div>
       </header>
 
@@ -520,7 +634,7 @@ export default function PetProfilePage() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => { setActiveTab(tab); setIsManagingDocs(false) }}
               className={`flex-1 py-3.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 ${
                 activeTab === tab
                   ? 'text-brand-blue border-brand-blue'
@@ -587,7 +701,95 @@ export default function PetProfilePage() {
         )}
 
         {activeTab === 'Documents' && (
-          <EmptyTabState icon="📄" message="No documents uploaded yet" />
+          <div className="space-y-4">
+            {/* Upload button */}
+            <Link
+              href={`/pets/${id}/documents/upload`}
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-sm font-bold tracking-wide transition-colors shadow-sm"
+            >
+              <span className="text-base leading-none">+</span> Upload Document
+            </Link>
+
+            {docsLoading ? (
+              <div className="flex justify-center py-12">
+                <div className="w-8 h-8 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin" />
+              </div>
+            ) : documents.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-14 text-center px-6">
+                <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
+                  <span className="text-3xl">📄</span>
+                </div>
+                <p className="text-sm font-semibold text-gray-700 mb-1">No documents yet</p>
+                <p className="text-xs text-gray-400">Upload vaccine records, insurance, and more to build a complete health profile.</p>
+              </div>
+            ) : (
+              /* Group documents by category */
+              (() => {
+                const grouped = documents.reduce<Record<string, PetDocument[]>>((acc, doc) => {
+                  if (!acc[doc.category]) acc[doc.category] = []
+                  acc[doc.category].push(doc)
+                  return acc
+                }, {})
+
+                return (
+                  <div className="space-y-5">
+                    {Object.entries(grouped).map(([category, docs]) => (
+                      <div key={category}>
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                          <span className="text-base">{CATEGORY_ICONS[category] ?? '📁'}</span>
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{category}</p>
+                        </div>
+                        <div className="space-y-2">
+                          {docs.map((doc) => (
+                            <div
+                              key={doc.id}
+                              className="flex items-center gap-2"
+                            >
+                              {/* Delete button (manage mode only) */}
+                              {isManagingDocs && (
+                                <button
+                                  onClick={() => setDeleteTarget(doc)}
+                                  className="shrink-0 w-8 h-8 rounded-full bg-brand-red flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+                                >
+                                  <span className="text-white text-lg leading-none font-bold">−</span>
+                                </button>
+                              )}
+                              {/* Document card */}
+                              <button
+                                onClick={() => !isManagingDocs && handleViewDocument(doc)}
+                                disabled={signingDocId === doc.id || isManagingDocs}
+                                className={`flex items-center gap-3 flex-1 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left transition-all ${
+                                  isManagingDocs
+                                    ? 'opacity-80 cursor-default'
+                                    : 'hover:shadow-md hover:border-brand-blue/20 active:scale-[0.99] disabled:opacity-60'
+                                }`}
+                              >
+                                <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
+                                  <span className="text-lg">
+                                    {doc.file_name.endsWith('.pdf') ? '📄' : '🖼️'}
+                                  </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-gray-900 truncate">{doc.document_type}</p>
+                                  <p className="text-xs text-gray-400 truncate mt-0.5">{doc.file_name}</p>
+                                  <p className="text-xs text-gray-300 mt-0.5">{formatDate(doc.created_at)}</p>
+                                </div>
+                                {!isManagingDocs && (
+                                  <span className="text-gray-300 text-xl shrink-0">
+                                    {signingDocId === doc.id ? '…' : '›'}
+                                  </span>
+                                )}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()
+            )}
+          </div>
         )}
         {activeTab === 'Medications' && (
           <EmptyTabState icon="💊" message="No medications added yet" />
@@ -596,6 +798,35 @@ export default function PetProfilePage() {
           <EmptyTabState icon="🔔" message="No reminders set yet" />
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl overflow-hidden">
+            <div className="p-6">
+              <h3 className="text-base font-bold text-gray-900 mb-1">Delete this document?</h3>
+              <p className="text-sm text-gray-500 mb-1">{deleteTarget.document_type}</p>
+              <p className="text-xs text-gray-400 mb-6">This cannot be undone.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteDocument}
+                  disabled={deleting}
+                  className="flex-1 py-3 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-sm font-bold transition-colors disabled:opacity-60"
+                >
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
