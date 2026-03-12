@@ -18,18 +18,6 @@ interface PetDocument {
   created_at: string
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  'Medical Records': '🏥',
-  'Medications & Prescriptions': '💊',
-  'Insurance': '🛡️',
-  'Identification & Registration': '🪪',
-  'Preventive Care': '🌿',
-  'Specialized Health Programs': '🔬',
-  'External Care Providers': '🤝',
-  'Travel & Compliance': '✈️',
-  'End of Life': '🕊️',
-}
-
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
@@ -116,8 +104,8 @@ function ToggleGroup<T extends string>({
           onClick={() => onChange(opt)}
           className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
             value === opt
-              ? 'bg-brand-blue text-white border-brand-blue'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-brand-blue/40'
+              ? 'bg-brand-green text-white border-brand-green'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green/40'
           }`}
         >
           {opt}
@@ -138,12 +126,9 @@ function InfoRow({ label, value }: { label: string; value: string | null | undef
   )
 }
 
-function EmptyTabState({ icon, message }: { icon: string; message: string }) {
+function EmptyTabState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-      <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
-        <span className="text-3xl">{icon}</span>
-      </div>
       <p className="text-sm text-gray-400">{message}</p>
     </div>
   )
@@ -358,7 +343,7 @@ export default function PetProfilePage() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-brand-green/20 border-t-brand-green animate-spin" />
           <p className="text-sm text-gray-400">Loading…</p>
         </div>
       </div>
@@ -372,7 +357,7 @@ export default function PetProfilePage() {
         <p className="text-sm text-gray-500 mb-6">{error ?? `This pet doesn't exist or you don't have access.`}</p>
         <button
           onClick={() => router.push('/pets')}
-          className="px-5 py-3 rounded-xl bg-brand-red text-white text-sm font-semibold"
+          className="px-5 py-3 rounded-xl bg-brand-green text-white text-sm font-semibold"
         >
           Back to My Pets
         </button>
@@ -401,7 +386,7 @@ export default function PetProfilePage() {
             <button
               onClick={handleEditSave}
               disabled={editLoading || !editForm.name.trim()}
-              className="text-sm font-bold text-brand-red hover:text-brand-red/80 disabled:opacity-40 transition-colors"
+              className="text-sm font-bold text-brand-green hover:text-brand-green/80 disabled:opacity-40 transition-colors"
             >
               {editLoading ? 'Saving…' : 'Save'}
             </button>
@@ -414,7 +399,7 @@ export default function PetProfilePage() {
             <button
               type="button"
               onClick={() => photoInputRef.current?.click()}
-              className="relative w-24 h-24 rounded-full overflow-hidden bg-white border-2 border-dashed border-gray-300 hover:border-brand-blue transition-colors flex items-center justify-center shadow-sm"
+              className="relative w-24 h-24 rounded-full overflow-hidden bg-white border-2 border-dashed border-gray-300 hover:border-brand-green transition-colors flex items-center justify-center shadow-sm"
             >
               {editPhotoPreview ? (
                 <Image src={editPhotoPreview} alt="Pet" fill className="object-cover" />
@@ -434,12 +419,12 @@ export default function PetProfilePage() {
 
             <div className="p-4">
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Pet Name <span className="text-brand-red">*</span>
+                Pet Name <span className="text-brand-green">*</span>
               </label>
               <input
                 type="text" required value={editForm.name}
                 onChange={(e) => setEdit('name', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
               />
             </div>
 
@@ -448,7 +433,7 @@ export default function PetProfilePage() {
               <select
                 value={editForm.species}
                 onChange={(e) => setEdit('species', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition bg-white"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition bg-white"
               >
                 <option value="">Select species…</option>
                 {SPECIES_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -461,7 +446,7 @@ export default function PetProfilePage() {
                 type="text" value={editForm.breed}
                 onChange={(e) => setEdit('breed', e.target.value)}
                 placeholder="e.g. Golden Retriever"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
               />
             </div>
 
@@ -471,7 +456,7 @@ export default function PetProfilePage() {
                 type="date" value={editForm.dateOfBirth}
                 max={new Date().toISOString().split('T')[0]}
                 onChange={(e) => setEdit('dateOfBirth', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
               />
             </div>
 
@@ -499,7 +484,7 @@ export default function PetProfilePage() {
                 type="number" min="0" step="0.1" value={editForm.weightLbs}
                 onChange={(e) => setEdit('weightLbs', e.target.value)}
                 placeholder="e.g. 45.5"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
               />
             </div>
 
@@ -509,7 +494,7 @@ export default function PetProfilePage() {
                 type="text" value={editForm.colorMarkings}
                 onChange={(e) => setEdit('colorMarkings', e.target.value)}
                 placeholder="e.g. Golden with white chest"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
               />
             </div>
 
@@ -521,11 +506,11 @@ export default function PetProfilePage() {
                   onChange={(e) => setEditAllergyInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addEditAllergy() } }}
                   placeholder="e.g. Chicken…"
-                  className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+                  className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
                 />
                 <button
                   type="button" onClick={addEditAllergy}
-                  className="px-4 py-3 rounded-xl bg-brand-blue/10 text-brand-blue text-sm font-semibold hover:bg-brand-blue/20 transition-colors"
+                  className="px-4 py-3 rounded-xl bg-brand-green/10 text-brand-green text-sm font-semibold hover:bg-brand-green/20 transition-colors"
                 >
                   Add
                 </button>
@@ -533,12 +518,12 @@ export default function PetProfilePage() {
               {editForm.allergies.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-3">
                   {editForm.allergies.map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-medium">
+                    <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium">
                       {tag}
                       <button
                         type="button"
                         onClick={() => setEdit('allergies', editForm.allergies.filter((a) => a !== tag))}
-                        className="text-brand-blue/60 hover:text-brand-red transition-colors"
+                        className="text-brand-green/60 hover:text-brand-green transition-colors"
                       >
                         ✕
                       </button>
@@ -551,14 +536,14 @@ export default function PetProfilePage() {
 
           {editError && (
             <div className="p-3 rounded-xl bg-red-50 border border-red-100">
-              <p className="text-xs text-brand-red">{editError}</p>
+              <p className="text-xs text-brand-green">{editError}</p>
             </div>
           )}
 
           <button
             onClick={handleEditSave}
             disabled={editLoading || !editForm.name.trim()}
-            className="w-full py-4 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            className="w-full py-4 rounded-xl bg-brand-green hover:bg-brand-green/90 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
           >
             {editLoading ? 'Saving…' : 'Save Changes'}
           </button>
@@ -584,7 +569,7 @@ export default function PetProfilePage() {
           {activeTab === 'Overview' && (
             <button
               onClick={startEditing}
-              className="text-sm font-semibold text-brand-blue hover:text-brand-blue/70 transition-colors"
+              className="text-sm font-semibold text-brand-green hover:text-brand-green/70 transition-colors"
             >
               Edit
             </button>
@@ -592,7 +577,7 @@ export default function PetProfilePage() {
           {activeTab === 'Documents' && (
             <button
               onClick={() => setIsManagingDocs((m) => !m)}
-              className={`text-sm font-semibold transition-colors ${isManagingDocs ? 'text-gray-900' : 'text-brand-blue hover:text-brand-blue/70'}`}
+              className={`text-sm font-semibold transition-colors ${isManagingDocs ? 'text-gray-900' : 'text-brand-green hover:text-brand-green/70'}`}
             >
               {isManagingDocs ? 'Done' : 'Manage'}
             </button>
@@ -607,7 +592,7 @@ export default function PetProfilePage() {
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-lg mx-auto px-4 py-8 flex flex-col items-center text-center">
           {/* Photo */}
-          <div className="w-28 h-28 rounded-full overflow-hidden bg-brand-blue/10 flex items-center justify-center mb-4 shadow-md ring-4 ring-white">
+          <div className="w-28 h-28 rounded-full overflow-hidden bg-brand-green/20 flex items-center justify-center mb-4 shadow-md ring-4 ring-white">
             {pet.photo_url ? (
               <Image
                 src={pet.photo_url}
@@ -617,13 +602,15 @@ export default function PetProfilePage() {
                 className="object-cover w-full h-full"
               />
             ) : (
-              <span className="text-5xl">🐾</span>
+              <span className="text-4xl font-bold text-brand-green">
+                {pet.name.charAt(0).toUpperCase()}
+              </span>
             )}
           </div>
           <h1 className="text-2xl font-bold text-gray-900">{pet.name}</h1>
           {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
           {age && (
-            <span className="mt-2 inline-block px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-semibold">
+            <span className="mt-2 inline-block px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-semibold">
               {age} old
             </span>
           )}
@@ -637,7 +624,7 @@ export default function PetProfilePage() {
               onClick={() => { setActiveTab(tab); setIsManagingDocs(false) }}
               className={`flex-1 py-3.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 ${
                 activeTab === tab
-                  ? 'text-brand-blue border-brand-blue'
+                  ? 'text-brand-green border-brand-green'
                   : 'text-gray-400 border-transparent hover:text-gray-600'
               }`}
             >
@@ -705,14 +692,14 @@ export default function PetProfilePage() {
             {/* Upload button */}
             <Link
               href={`/pets/${id}/documents/upload`}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-sm font-bold tracking-wide transition-colors shadow-sm"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-brand-green hover:bg-brand-green/90 text-white text-sm font-bold tracking-wide transition-colors shadow-sm"
             >
               <span className="text-base leading-none">+</span> Upload Document
             </Link>
 
             {docsLoading ? (
               <div className="flex justify-center py-12">
-                <div className="w-8 h-8 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin" />
+                <div className="w-8 h-8 rounded-full border-4 border-brand-green/20 border-t-brand-green animate-spin" />
               </div>
             ) : documents.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-14 text-center px-6">
@@ -736,7 +723,6 @@ export default function PetProfilePage() {
                     {Object.entries(grouped).map(([category, docs]) => (
                       <div key={category}>
                         <div className="flex items-center gap-2 mb-2 px-1">
-                          <span className="text-base">{CATEGORY_ICONS[category] ?? '📁'}</span>
                           <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{category}</p>
                         </div>
                         <div className="space-y-2">
@@ -749,7 +735,7 @@ export default function PetProfilePage() {
                               {isManagingDocs && (
                                 <button
                                   onClick={() => setDeleteTarget(doc)}
-                                  className="shrink-0 w-8 h-8 rounded-full bg-brand-red flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+                                  className="shrink-0 w-8 h-8 rounded-full bg-brand-green flex items-center justify-center shadow-sm active:scale-95 transition-transform"
                                 >
                                   <span className="text-white text-lg leading-none font-bold">−</span>
                                 </button>
@@ -761,12 +747,12 @@ export default function PetProfilePage() {
                                 className={`flex items-center gap-3 flex-1 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left transition-all ${
                                   isManagingDocs
                                     ? 'opacity-80 cursor-default'
-                                    : 'hover:shadow-md hover:border-brand-blue/20 active:scale-[0.99] disabled:opacity-60'
+                                    : 'hover:shadow-md hover:border-brand-green/20 active:scale-[0.99] disabled:opacity-60'
                                 }`}
                               >
-                                <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
-                                  <span className="text-lg">
-                                    {doc.file_name.endsWith('.pdf') ? '📄' : '🖼️'}
+                                <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center shrink-0">
+                                  <span className="text-xs font-bold text-brand-green">
+                                    {doc.file_name.endsWith('.pdf') ? 'PDF' : 'IMG'}
                                   </span>
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -818,7 +804,7 @@ export default function PetProfilePage() {
                 <button
                   onClick={handleDeleteDocument}
                   disabled={deleting}
-                  className="flex-1 py-3 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-sm font-bold transition-colors disabled:opacity-60"
+                  className="flex-1 py-3 rounded-xl bg-brand-green hover:bg-brand-green/90 text-white text-sm font-bold transition-colors disabled:opacity-60"
                 >
                   {deleting ? 'Deleting…' : 'Delete'}
                 </button>

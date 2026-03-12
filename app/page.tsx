@@ -18,7 +18,6 @@ export default function HomePage() {
         router.replace('/auth')
         return
       }
-      // Redirect to onboarding if user has no pets yet
       const { data: pets } = await supabase
         .from('pets')
         .select('id')
@@ -42,7 +41,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-brand-green/30 border-t-brand-green animate-spin" />
           <p className="text-sm text-gray-400">Loading…</p>
         </div>
       </div>
@@ -64,18 +63,17 @@ export default function HomePage() {
           />
           <button
             onClick={handleSignOut}
-            className="text-sm text-gray-400 hover:text-brand-red font-medium transition-colors"
+            className="text-sm text-gray-400 hover:text-brand-green font-medium transition-colors"
           >
             Sign out
           </button>
         </div>
       </header>
 
-      {/* Main content */}
       <main className="max-w-lg mx-auto px-4 py-8 space-y-6">
         {/* Welcome card */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <p className="text-xs font-semibold text-brand-blue uppercase tracking-wider mb-1">Welcome back</p>
+          <p className="text-xs font-semibold text-brand-green uppercase tracking-wider mb-1">Welcome back</p>
           <h2 className="text-xl font-bold text-gray-900 mb-1 truncate">{user?.email}</h2>
           <p className="text-sm text-gray-500">Manage your pets&apos; health records, appointments, and more.</p>
         </div>
@@ -86,23 +84,21 @@ export default function HomePage() {
           <div className="grid grid-cols-2 gap-3">
             <Link
               href="/pets"
-              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left hover:shadow-md transition-all active:scale-95 border-t-4 border-t-brand-blue"
+              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left hover:shadow-md transition-all active:scale-95 border-t-4 border-t-brand-green"
             >
-              <span className="text-2xl block mb-2">🐶</span>
-              <p className="text-sm font-semibold text-gray-900">My Pets</p>
+              <p className="text-sm font-semibold text-brand-green mt-1">My Pets</p>
               <p className="text-xs text-gray-400 mt-0.5">View &amp; manage pets</p>
             </Link>
             {[
-              { icon: '📋', label: 'Health Records', desc: 'Vaccinations & visits', accent: 'border-t-4 border-t-olive' },
-              { icon: '📅', label: 'Appointments', desc: 'Book a vet visit', accent: 'border-t-4 border-t-coral' },
-              { icon: '💊', label: 'Medications', desc: 'Track prescriptions', accent: 'border-t-4 border-t-light-blue' },
+              { label: 'Health Records', desc: 'Vaccinations & visits', accent: 'border-t-4 border-t-brand-green' },
+              { label: 'Appointments', desc: 'Book a vet visit', accent: 'border-t-4 border-t-brand-green' },
+              { label: 'Medications', desc: 'Track prescriptions', accent: 'border-t-4 border-t-brand-green' },
             ].map((item) => (
               <button
                 key={item.label}
                 className={`bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left hover:shadow-md transition-all active:scale-95 ${item.accent}`}
               >
-                <span className="text-2xl block mb-2">{item.icon}</span>
-                <p className="text-sm font-semibold text-gray-900">{item.label}</p>
+                <p className="text-sm font-semibold text-brand-green mt-1">{item.label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
               </button>
             ))}
@@ -110,7 +106,7 @@ export default function HomePage() {
         </div>
 
         {/* Coming soon banner */}
-        <div className="bg-brand-red rounded-2xl p-5 text-white shadow-sm">
+        <div className="bg-brand-green rounded-2xl p-5 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80 mb-1">Coming Soon</p>
           <p className="font-semibold text-base">More features are on the way!</p>
           <p className="text-sm opacity-80 mt-1">We&apos;re building the full PetComplete experience for you.</p>

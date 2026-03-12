@@ -71,7 +71,7 @@ export default function AuthPage() {
             onClick={() => handleTabChange('login')}
             className={`flex-1 py-4 text-sm font-semibold transition-colors ${
               tab === 'login'
-                ? 'text-brand-blue border-b-2 border-brand-blue'
+                ? 'text-brand-green border-b-2 border-brand-green'
                 : 'text-gray-400 hover:text-gray-600'
             }`}
           >
@@ -81,7 +81,7 @@ export default function AuthPage() {
             onClick={() => handleTabChange('signup')}
             className={`flex-1 py-4 text-sm font-semibold transition-colors ${
               tab === 'signup'
-                ? 'text-brand-blue border-b-2 border-brand-blue'
+                ? 'text-brand-green border-b-2 border-brand-green'
                 : 'text-gray-400 hover:text-gray-600'
             }`}
           >
@@ -103,7 +103,7 @@ export default function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
             />
           </div>
 
@@ -119,28 +119,25 @@ export default function AuthPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={tab === 'signup' ? 'Min. 6 characters' : '••••••••'}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
             />
           </div>
 
-          {/* Error / Success messages */}
           {error && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100">
-              <span className="text-brand-red text-xs mt-0.5">⚠</span>
-              <p className="text-xs text-brand-red">{error}</p>
+            <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+              <p className="text-xs text-brand-green">{error}</p>
             </div>
           )}
           {success && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-green-50 border border-green-100">
-              <span className="text-green-600 text-xs mt-0.5">✓</span>
-              <p className="text-xs text-green-700">{success}</p>
+            <div className="p-3 rounded-xl bg-green-50 border border-green-100">
+              <p className="text-xs text-brand-green">{success}</p>
             </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-brand-red hover:bg-brand-red/90 active:bg-brand-red/80 text-white text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm mt-2"
+            className="w-full py-3 px-4 rounded-xl bg-brand-green hover:bg-brand-green/90 active:bg-brand-green/80 text-white text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm mt-2"
           >
             {loading
               ? tab === 'login' ? 'Logging in…' : 'Creating account…'
@@ -154,7 +151,7 @@ export default function AuthPage() {
               <button
                 type="button"
                 onClick={() => handleTabChange('signup')}
-                className="text-brand-blue font-medium hover:underline"
+                className="text-brand-green font-medium hover:underline"
               >
                 Sign up free
               </button>

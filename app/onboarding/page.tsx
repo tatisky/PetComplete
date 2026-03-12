@@ -51,8 +51,8 @@ function ToggleGroup<T extends string>({
           onClick={() => onChange(opt)}
           className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
             value === opt
-              ? 'bg-brand-blue text-white border-brand-blue'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-brand-blue/40'
+              ? 'bg-brand-green text-white border-brand-green'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green/40'
           }`}
         >
           {opt}
@@ -63,14 +63,12 @@ function ToggleGroup<T extends string>({
 }
 
 function DocUploadCard({
-  icon,
   title,
   subtitle,
   file,
   onFileChange,
   accept,
 }: {
-  icon: string
   title: string
   subtitle: string
   file: File | null
@@ -82,7 +80,7 @@ function DocUploadCard({
     <div
       onClick={() => inputRef.current?.click()}
       className={`relative flex items-center gap-4 bg-white rounded-2xl p-4 border-2 cursor-pointer transition-colors ${
-        file ? 'border-brand-blue' : 'border-dashed border-gray-200 hover:border-brand-blue/40'
+        file ? 'border-brand-green' : 'border-dashed border-gray-200 hover:border-brand-green/40'
       }`}
     >
       <input
@@ -92,8 +90,8 @@ function DocUploadCard({
         className="hidden"
         onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
       />
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${file ? 'bg-brand-blue/10' : 'bg-gray-50'}`}>
-        <span className="text-2xl">{icon}</span>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${file ? 'bg-brand-green/10' : 'bg-gray-50'}`}>
+        <span className="text-xs font-bold text-gray-400">PDF</span>
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-gray-900">{title}</p>
@@ -105,12 +103,12 @@ function DocUploadCard({
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onFileChange(null) }}
-          className="shrink-0 w-6 h-6 rounded-full bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-brand-red flex items-center justify-center text-xs transition-colors"
+          className="shrink-0 w-6 h-6 rounded-full bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-brand-green flex items-center justify-center text-xs transition-colors"
         >
           ✕
         </button>
       ) : (
-        <span className="shrink-0 w-7 h-7 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center text-lg font-light">+</span>
+        <span className="shrink-0 w-7 h-7 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center text-lg font-light">+</span>
       )}
     </div>
   )
@@ -136,7 +134,6 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Guard: redirect to /auth if not logged in
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) router.replace('/auth')
@@ -172,7 +169,6 @@ export default function OnboardingPage() {
       if (!user) { router.replace('/auth'); return }
       userIdRef.current = user.id
 
-      // 1. Insert pet record
       const { data: pet, error: insertErr } = await supabase
         .from('pets')
         .insert({
@@ -193,7 +189,6 @@ export default function OnboardingPage() {
       if (insertErr) throw insertErr
       petIdRef.current = pet.id
 
-      // 2. Upload profile photo if selected
       if (photoFile) {
         const ext = photoFile.name.split('.').pop()
         const path = `${user.id}/${pet.id}/profile.${ext}`
@@ -251,7 +246,6 @@ export default function OnboardingPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
       <header className="bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <Image src="/logo.png" alt="PetComplete" width={120} height={40} className="object-contain" priority />
@@ -262,7 +256,7 @@ export default function OnboardingPage() {
       {/* Progress bar */}
       <div className="h-1 bg-gray-200">
         <div
-          className="h-1 bg-brand-red transition-all duration-500"
+          className="h-1 bg-brand-green transition-all duration-500"
           style={{ width: step === 1 ? '50%' : '100%' }}
         />
       </div>
@@ -329,13 +323,12 @@ function StepOne({
         <button
           type="button"
           onClick={() => photoInputRef.current?.click()}
-          className="relative w-24 h-24 rounded-full overflow-hidden bg-white border-2 border-dashed border-gray-300 hover:border-brand-blue transition-colors flex items-center justify-center shadow-sm"
+          className="relative w-24 h-24 rounded-full overflow-hidden bg-white border-2 border-dashed border-gray-300 hover:border-brand-green transition-colors flex items-center justify-center shadow-sm"
         >
           {photoPreview ? (
             <Image src={photoPreview} alt="Pet photo" fill className="object-cover" />
           ) : (
             <div className="flex flex-col items-center gap-1 text-gray-400">
-              <span className="text-2xl">📷</span>
               <span className="text-xs font-medium">Add photo</span>
             </div>
           )}
@@ -353,10 +346,9 @@ function StepOne({
       {/* Form card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-50">
 
-        {/* Pet name */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-            Pet Name <span className="text-brand-red">*</span>
+            Pet Name <span className="text-brand-green">*</span>
           </label>
           <input
             type="text"
@@ -364,17 +356,16 @@ function StepOne({
             value={form.name}
             onChange={(e) => set('name', e.target.value)}
             placeholder="e.g. Buddy"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
           />
         </div>
 
-        {/* Species */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Species</label>
           <select
             value={form.species}
             onChange={(e) => set('species', e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition bg-white appearance-none"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition bg-white appearance-none"
           >
             <option value="">Select species…</option>
             {SPECIES_OPTIONS.map((s) => (
@@ -383,7 +374,6 @@ function StepOne({
           </select>
         </div>
 
-        {/* Breed */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Breed</label>
           <input
@@ -391,11 +381,10 @@ function StepOne({
             value={form.breed}
             onChange={(e) => set('breed', e.target.value)}
             placeholder="e.g. Golden Retriever"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
           />
         </div>
 
-        {/* Date of birth */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Date of Birth</label>
           <input
@@ -403,11 +392,10 @@ function StepOne({
             value={form.dateOfBirth}
             onChange={(e) => set('dateOfBirth', e.target.value)}
             max={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
           />
         </div>
 
-        {/* Sex */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sex</label>
           <ToggleGroup
@@ -417,7 +405,6 @@ function StepOne({
           />
         </div>
 
-        {/* Spayed / Neutered */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Spayed / Neutered</label>
           <ToggleGroup
@@ -427,7 +414,6 @@ function StepOne({
           />
         </div>
 
-        {/* Weight */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Weight (lbs)</label>
           <input
@@ -437,11 +423,10 @@ function StepOne({
             value={form.weightLbs}
             onChange={(e) => set('weightLbs', e.target.value)}
             placeholder="e.g. 45.5"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
           />
         </div>
 
-        {/* Color / markings */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Color / Markings</label>
           <input
@@ -449,11 +434,10 @@ function StepOne({
             value={form.colorMarkings}
             onChange={(e) => set('colorMarkings', e.target.value)}
             placeholder="e.g. Golden with white chest"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
           />
         </div>
 
-        {/* Known allergies */}
         <div className="p-4">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Known Allergies</label>
           <div className="flex gap-2">
@@ -463,12 +447,12 @@ function StepOne({
               onChange={(e) => setAllergyInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addAllergy() } }}
               placeholder="e.g. Chicken, pollen…"
-              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue transition"
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green transition"
             />
             <button
               type="button"
               onClick={addAllergy}
-              className="px-4 py-3 rounded-xl bg-brand-blue/10 text-brand-blue text-sm font-semibold hover:bg-brand-blue/20 transition-colors"
+              className="px-4 py-3 rounded-xl bg-brand-green/10 text-brand-green text-sm font-semibold hover:bg-brand-green/20 transition-colors"
             >
               Add
             </button>
@@ -478,13 +462,13 @@ function StepOne({
               {form.allergies.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-medium"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => set('allergies', form.allergies.filter((a) => a !== tag))}
-                    className="text-brand-blue/60 hover:text-brand-red transition-colors leading-none"
+                    className="text-gray-400 hover:text-brand-green transition-colors leading-none"
                   >
                     ✕
                   </button>
@@ -496,16 +480,15 @@ function StepOne({
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100">
-          <span className="text-brand-red text-xs mt-0.5">⚠</span>
-          <p className="text-xs text-brand-red">{error}</p>
+        <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+          <p className="text-xs text-brand-green">{error}</p>
         </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 rounded-xl bg-brand-red hover:bg-brand-red/90 active:bg-brand-red/80 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+        className="w-full py-4 rounded-xl bg-brand-green hover:bg-brand-green/90 active:bg-brand-green/80 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
       >
         {loading ? 'Saving…' : 'Continue →'}
       </button>
@@ -541,7 +524,6 @@ function StepTwo({
 
       <div className="space-y-3">
         <DocUploadCard
-          icon="💉"
           title="Vaccine Records"
           subtitle="PDF, JPG, or PNG"
           file={vaccineFile}
@@ -549,7 +531,6 @@ function StepTwo({
           accept=".pdf,image/*"
         />
         <DocUploadCard
-          icon="🏥"
           title="Insurance Documents"
           subtitle="PDF, JPG, or PNG"
           file={insuranceFile}
@@ -563,7 +544,7 @@ function StepTwo({
           <button
             onClick={onSave}
             disabled={loading}
-            className="w-full py-4 rounded-xl bg-brand-red hover:bg-brand-red/90 active:bg-brand-red/80 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            className="w-full py-4 rounded-xl bg-brand-green hover:bg-brand-green/90 active:bg-brand-green/80 text-white text-sm font-bold tracking-wide transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
           >
             {loading ? 'Uploading…' : 'Save & Continue'}
           </button>

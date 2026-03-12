@@ -41,10 +41,15 @@ function PetAvatar({ url, name, size }: { url: string | null; name: string; size
   }
   return (
     <div
-      className="rounded-full shrink-0 bg-brand-blue/10 flex items-center justify-center"
+      className="rounded-full shrink-0 bg-brand-green/20 flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      <span className="text-2xl">🐾</span>
+      <span
+        className="font-bold text-brand-green"
+        style={{ fontSize: size * 0.38 }}
+      >
+        {name.charAt(0).toUpperCase()}
+      </span>
     </div>
   )
 }
@@ -76,7 +81,7 @@ export default function PetsPage() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-brand-green/30 border-t-brand-green animate-spin" />
           <p className="text-sm text-gray-400">Loading your pets…</p>
         </div>
       </div>
@@ -99,7 +104,7 @@ export default function PetsPage() {
           </div>
           <Link
             href="/onboarding"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-red text-white text-sm font-semibold hover:bg-brand-red/90 transition-colors shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-green text-white text-sm font-semibold hover:bg-brand-green/90 transition-colors shadow-sm"
           >
             <span className="text-base leading-none">+</span> Add Pet
           </Link>
@@ -109,15 +114,14 @@ export default function PetsPage() {
       <main className="max-w-lg mx-auto px-4 py-6">
         {error && (
           <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100">
-            <p className="text-sm text-brand-red">{error}</p>
+            <p className="text-sm text-brand-green">{error}</p>
           </div>
         )}
 
         {pets.length === 0 ? (
-          /* Empty state */
           <div className="flex flex-col items-center justify-center py-24 text-center px-6">
             <div className="w-20 h-20 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-5">
-              <span className="text-4xl">🐾</span>
+              <span className="text-3xl font-bold text-brand-green">P</span>
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">No pets yet</h2>
             <p className="text-sm text-gray-500 mb-6 max-w-xs">
@@ -125,7 +129,7 @@ export default function PetsPage() {
             </p>
             <Link
               href="/onboarding"
-              className="px-6 py-3 rounded-xl bg-brand-red text-white text-sm font-bold hover:bg-brand-red/90 transition-colors shadow-sm"
+              className="px-6 py-3 rounded-xl bg-brand-green text-white text-sm font-bold hover:bg-brand-green/90 transition-colors shadow-sm"
             >
               Add Your First Pet
             </Link>
@@ -140,7 +144,7 @@ export default function PetsPage() {
                 <Link
                   key={pet.id}
                   href={`/pets/${pet.id}`}
-                  className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-brand-blue/20 transition-all active:scale-[0.99]"
+                  className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-brand-green/30 transition-all active:scale-[0.99]"
                 >
                   <PetAvatar url={pet.photo_url} name={pet.name} size={64} />
                   <div className="flex-1 min-w-0">
@@ -149,7 +153,7 @@ export default function PetsPage() {
                       <p className="text-sm text-gray-500 truncate mt-0.5">{subtitle}</p>
                     )}
                     {age && (
-                      <p className="text-xs text-brand-blue font-medium mt-1">{age} old</p>
+                      <p className="text-xs text-brand-green font-medium mt-1">{age} old</p>
                     )}
                   </div>
                   <span className="text-gray-300 text-xl shrink-0">›</span>
